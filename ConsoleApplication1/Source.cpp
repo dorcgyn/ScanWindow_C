@@ -4,6 +4,7 @@
 #include <iterator>
 #include <Windows.h>
 #include <string>
+#include "KeyboardWrap.h"
 
 using namespace std;
 
@@ -21,25 +22,6 @@ TCHAR* printWindowText (HWND hWnd) {
 	return buffer;
 }
 
-BOOL CALLBACK enumDesktopWindowsProc(__in HWND hWnd, __in  LPARAM lParam) {
-    
-	TCHAR* buffer = printWindowText(hWnd);
-	if (buffer == NULL) return TRUE;
-
-    wstring s2 ( buffer );
-    wstring s3 (L"Ning") ;
-    std::string::size_type found = s2.find(s3);
-    if (found!=std::string::npos)
-    {
-      // SendMessage(hWnd,WM_DESTROY,0,0);
-		HWND child = ::GetWindow(hWnd, GW_CHILD);
-		cout << "Child : ";
-
-		printWindowText(hWnd);
-    }
-    delete[] buffer;
-    return TRUE;
-}
 
 BOOL CALLBACK enumWindowsProc(__in HWND hWnd, __in  LPARAM lParam) {
 	i++;
@@ -68,7 +50,6 @@ BOOL CALLBACK enumWindowsProc(__in HWND hWnd, __in  LPARAM lParam) {
 		GetWindowRect(hWnd, &rect);
 //		cout << rect.left << "; top " << rect.top << "; right " << rect.right << "; bottom " << rect.bottom << endl;
 
-	//	cout << "Is visibal: ";
 		 if (!IsWindowVisible(hWnd)) {
 			ShowWindow(hWnd, SW_SHOWNORMAL);
 			SetFocus(hWnd);
@@ -77,30 +58,8 @@ BOOL CALLBACK enumWindowsProc(__in HWND hWnd, __in  LPARAM lParam) {
 
 			Sleep(100);
 
-			INPUT ip;
-			ip.type = INPUT_KEYBOARD;
-			ip.ki.wScan = 0; // hardware scan code for key
-			ip.ki.time = 0;
-			ip.ki.dwExtraInfo = 0;
- 
-			// Press the "A" key
-			ip.ki.wVk = 0x41; // virtual-key code for the "a" key
-			ip.ki.dwFlags = 0; // 0 for key press
-			SendInput(1, &ip, sizeof(INPUT));
-			// Release the "A" key
-		    ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
-		    SendInput(1, &ip, sizeof(INPUT));
-
-			// cout << "input a" << endl;
-			
-			INPUT ip2;
-			ip2.type = INPUT_KEYBOARD;
-			ip2.ki.wVk = 0x0D; // virtual-key code for the "Enter" key
-			ip2.ki.dwFlags = 0; // 0 for key press
-			SendInput(1, &ip2, sizeof(INPUT));
-			// Release the "Enter" key
-			ip2.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
-			SendInput(1, &ip2, sizeof(INPUT));
+			KeyboardWrap key;
+			key.typeString("Auto reply, I am not here~~");
 			
 			Sleep(1000);
 		 	SendMessage(hWnd, WM_CLOSE, 0, 0);
@@ -110,18 +69,11 @@ BOOL CALLBACK enumWindowsProc(__in HWND hWnd, __in  LPARAM lParam) {
     return TRUE;
 }
 
-BOOL CALLBACK enumWindowStations(_In_ LPTSTR lpszWindowStation, __in  LPARAM lParam) {
-	std::cout << "Hellow world2" << endl;
-    std::cout << (lpszWindowStation) <<endl;
-    return TRUE;
-}
 
 int main(int argc, char* argv[])
 {
 	std::cout << "Hellow world" << endl;
 
-	// Get current thread
-	// DWORD dwThreadId = GetCurrentThreadId();
 	while (true) { 
 		BOOL enumeratingWindowsSucceeded2 = ::EnumWindows(enumWindowsProc, NULL);
 		Sleep(3000);

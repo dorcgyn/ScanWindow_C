@@ -11,7 +11,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="KeyboardWrap.cpp" />
     <ClCompile Include="Source.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="KeyboardWrap.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{79068CE4-4404-46A1-94E5-2037CCBC9842}</ProjectGuid>
